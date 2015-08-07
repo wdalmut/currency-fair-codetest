@@ -22,7 +22,6 @@ class MessageController
             $this->container->get("redis")->set($body['id'], json_encode($body));
             $this->container->get("redis")->publish("app", json_encode($body));
             $response->getBody()->write(json_encode($body));
-            var_dump($response->getBody()->__toString());
             return $response;
         }
         $response = $response->withStatus(406);
