@@ -5,8 +5,8 @@ io = require('socket.io').listen(app);
 app.listen(9090);
 
 io.sockets.on('connection', function (socket) {
-    subscribe = redis.createClient(undefined, "127.0.0.1");
-    pub = redis.createClient(undefined, "127.0.0.1");
+    subscribe = redis.createClient(6379, "127.0.0.1");
+    pub = redis.createClient(6379, "127.0.0.1");
 
    socket.on("subscribe", function (channel) {
         subscribe.subscribe(channel);
