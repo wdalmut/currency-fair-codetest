@@ -73,6 +73,23 @@
     <script type="text/javascript" src="http://127.0.0.1:9090/socket.io/socket.io.js"></script>
 
     <script>
+      $.get("http://localhost:8080/message", function(data) {
+        for (var ii = 0; ii <= data.length; ii++) {
+          var row = data[ii];
+          $("#tbody-start").append("<tr>"+
+                "<th scope='row'>"+row.id+"</th>"+
+                "<td>"+row.userId+"</td>"+
+                "<td>"+row.currencyFrom+"</td>"+
+                "<td>"+row.currencyTo+"</td>"+
+                "<td>"+row.amountSell+"</td>"+
+                "<td>"+row.amountBuy+"</td>"+
+                "<td>"+row.rate+"</td>"+
+                "<td>"+row.timePlaced+"</td>"+
+                "<td>"+row.originatingCountry+"</td>"+
+              "</tr>");
+          }
+      });
+
       jQuery('#vmap').vectorMap({
           map: 'world_en',
           backgroundColor: "#000",
@@ -95,13 +112,13 @@
 
       socket.on('message', function (data) {
         row = JSON.parse(data);
-        $("#tbody-start").append("<tr>"+
+        $("#tbody-start").prepend("<tr>"+
               "<th scope='row'>"+row.id+"</th>"+
               "<td>"+row.userId+"</td>"+
               "<td>"+row.currencyFrom+"</td>"+
               "<td>"+row.currencyTo+"</td>"+
               "<td>"+row.amountSell+"</td>"+
-              "<td>"+row.amountBy+"</td>"+
+              "<td>"+row.amountBuy+"</td>"+
               "<td>"+row.rate+"</td>"+
               "<td>"+row.timePlaced+"</td>"+
               "<td>"+row.originatingCountry+"</td>"+
