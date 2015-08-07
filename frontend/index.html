@@ -21,17 +21,47 @@
   </head>
 
   <body>
-    <section>
-      <div class="container">
-        <div class="starter-template">
-          <h1>Bootstrap starter template</h1>
-          <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
+    <div class="container">
+      <section>
+        <div class="container">
+          <div class="starter-template">
+            <h1>Transactions</h1>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="row">
+          <div class="col-md-12" style="">
+            <div id="vmap" style="width: 1000px; height: 600px;margin:auto;"></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="row">
+          <div class="col-md-12" style="">
+            <table class="table">
+              <caption>Row data</caption>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>UserId</th>
+                  <th>CurrencyFrom</th>
+                  <th>CurrencyTo</th>
+                  <th>AmountSell</th>
+                  <th>AmountBuy</th>
+                  <th>Rate</th>
+                  <th>TimePlaced</th>
+                  <th>OriginatingCountry</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-start">
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </section>
-
-    <section>
-      <div id="vmap" style="width: 600px; height: 400px;"></div>
     </section>
 
 
@@ -40,11 +70,12 @@
 
     <script src="https://cdn.rawgit.com/manifestinteractive/jqvmap/stable/jqvmap/jquery.vmap.js"></script>
     <script src="https://cdn.rawgit.com/manifestinteractive/jqvmap/stable/jqvmap/maps/jquery.vmap.world.js"></script>
+    <script type="text/javascript" src="http://127.0.0.1:9090/socket.io/socket.io.js"></script>
 
     <script>
       jQuery('#vmap').vectorMap({
           map: 'world_en',
-          backgroundColor: null,
+          backgroundColor: "#000",
           color: '#ffffff',
           hoverOpacity: 0.7,
           selectedColor: '#666666',
@@ -53,6 +84,28 @@
           values: [],
           scaleColors: ['#C8EEFF', '#006491'],
           normalizeFunction: 'polynomial'
+      });
+
+      var socket = io('http://127.0.0.1:9090');
+      socket.emit('subscribe', "app");
+      socket.on('init', function (data) {
+        console.log(data);
+        socket.emit('my other event', { my: 'data' });
+      });
+
+      socket.on('message', function (data) {
+        row = JSON.parse(data);
+        $("#tbody-start").append("<tr>"+
+              "<th scope='row'>"+row.id+"</th>"+
+              "<td>"+row.userId+"</td>"+
+              "<td>"+row.currencyFrom+"</td>"+
+              "<td>"+row.currencyTo+"</td>"+
+              "<td>"+row.amountSell+"</td>"+
+              "<td>"+row.amountBy+"</td>"+
+              "<td>"+row.rate+"</td>"+
+              "<td>"+row.timePlaced+"</td>"+
+              "<td>"+row.originatingCountry+"</td>"+
+            "</tr>");
       });
     </script>
   </body>
