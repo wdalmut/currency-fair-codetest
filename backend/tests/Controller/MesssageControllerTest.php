@@ -11,6 +11,40 @@ class MessageControllerTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->app = new \GianArb\Penny\App();
+        $this->app->getContainer()->get("redis")->flushall();
+    }
+
+    public function testRateLimit()
+    {
+        $assertStatusCode = 200;
+        $message = [
+            "userId" => 1241,
+            "currencyFrom" => "EUR",
+            "currencyTo" => "GBP",
+            "amountSell" => 1000,
+            "amountBuy" => 242.10,
+            "timePlaced" => "24-JAN-15 10:27:44",
+            "originatingCountry" => "IT",
+            "rate" => 1,
+        ];
+
+        $request = (new \Zend\Diactoros\Request())
+            ->withUri(new \Zend\Diactoros\Uri('/message'))
+            ->withMethod("POST");
+
+        $stream = new Stream('php://memory', 'wb+');
+        $stream->write(json_encode($message));
+
+        $request = $request->withBody($stream);
+        $response = new \Zend\Diactoros\Response();
+
+        for ($ii = 1; $ii <= 11; $ii++) {
+            $response = $this->app->run($request, $response);
+            if ($ii == 11) {
+                $assertStatusCode = 429;
+            }
+            $this->assertEquals($assertStatusCode, $response->getStatusCode(), $ii);
+        }
     }
 
     public function testValidMessage()
