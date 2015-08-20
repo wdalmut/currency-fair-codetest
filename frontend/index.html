@@ -76,7 +76,7 @@
       var markers = [];
       var map;
 
-      var socket = io('http://127.0.0.1:9090');
+      var socket = io(window.config.soketServer);
       socket.emit('subscribe', "app");
 
       socket.on('message', function (data) {
