@@ -2,5 +2,6 @@ function init() {
   window.config = {};
   window.config.geoKey = "your-key";
   window.config.soketServer = "http://127.0.0.1:9090";
+  window.config.apiServer = "http://127.0.0.1:8085";
 }
 init();

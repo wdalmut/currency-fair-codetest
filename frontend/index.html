@@ -68,7 +68,13 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
     <script src="/js/config.js"></script>
-    <script type="text/javascript" src="http://127.0.0.1:9090/socket.io/socket.io.js"></script>
+
+    <script>
+      var script = document.createElement('script');
+      script.src = window.config.socketServer+"/socket.io/socket.io.js";
+      document.getElementsByTagName('script')[0].appendChild(script);
+    </script>
+
     <script src="https://maps.googleapis.com/maps/api/js?callback=initMap"></script>
     <script src="https://cdn.rawgit.com/googlemaps/js-marker-clusterer/gh-pages/src/markerclusterer_compiled.js"></script>
 
@@ -76,7 +82,7 @@
       var markers = [];
       var map;
 
-      var socket = io(window.config.soketServer);
+      var socket = io(window.config.socketServer);
       socket.emit('subscribe', "app");
 
       socket.on('message', function (data) {
@@ -95,7 +101,7 @@
       }
 
       function initData() {
-        $.get("http://localhost:8080/message", function(data) {
+        $.get(window.config.apiServer+"/message", function(data) {
           for (var ii = 0; ii <= data.length; ii++) {
             var row = data[ii];
             if (row !== undefined) {
