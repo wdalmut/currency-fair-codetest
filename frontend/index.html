@@ -73,6 +73,16 @@
       var script = document.createElement('script');
       script.src = window.config.socketServer+"/socket.io/socket.io.js";
       document.getElementsByTagName('script')[0].appendChild(script);
+      script.onload = function() {
+        var socket = io(window.config.socketServer);
+        socket.emit('subscribe', "app");
+
+        socket.on('message', function (data) {
+          row = JSON.parse(data);
+          addOnTable(row);
+          addOnMap(row);
+        });
+      };
     </script>
 
     <script src="https://maps.googleapis.com/maps/api/js?callback=initMap"></script>
@@ -81,15 +91,6 @@
     <script>
       var markers = [];
       var map;
-
-      var socket = io(window.config.socketServer);
-      socket.emit('subscribe', "app");
-
-      socket.on('message', function (data) {
-        row = JSON.parse(data);
-        addOnTable(row);
-        addOnMap(row);
-      });
 
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
