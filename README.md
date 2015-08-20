@@ -39,3 +39,6 @@ It runs backend server on port `8080`
 make frontend_start
 ```
 It run frontend server on port `8085`
+
+### Config
+Copy `/frontend/js/config.js.dist` into `/frontend/js/config.js` and you replace default configurations with correct token

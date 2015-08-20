@@ -17,7 +17,6 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <link href="https://rawgit.com/manifestinteractive/jqvmap/stable/jqvmap/jqvmap.css" rel="stylesheet">
   </head>
 
   <body>
@@ -33,7 +32,7 @@
       <section>
         <div class="row">
           <div class="col-md-12" style="">
-            <div id="vmap" style="width: 1000px; height: 600px;margin:auto;"></div>
+            <div id="map" style="width: 1000px; height: 600px;margin:auto;"></div>
           </div>
         </div>
       </section>
@@ -68,50 +67,56 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
-    <script src="https://cdn.rawgit.com/manifestinteractive/jqvmap/stable/jqvmap/jquery.vmap.js"></script>
-    <script src="https://cdn.rawgit.com/manifestinteractive/jqvmap/stable/jqvmap/maps/jquery.vmap.world.js"></script>
+    <script src="/js/config.js"></script>
     <script type="text/javascript" src="http://127.0.0.1:9090/socket.io/socket.io.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?callback=initMap"></script>
+    <script src="https://cdn.rawgit.com/googlemaps/js-marker-clusterer/gh-pages/src/markerclusterer_compiled.js"></script>
 
     <script>
-      $.get("http://localhost:8080/message", function(data) {
-        for (var ii = 0; ii <= data.length; ii++) {
-          var row = data[ii];
-          $("#tbody-start").append("<tr>"+
-                "<th scope='row'>"+row.id+"</th>"+
-                "<td>"+row.userId+"</td>"+
-                "<td>"+row.currencyFrom+"</td>"+
-                "<td>"+row.currencyTo+"</td>"+
-                "<td>"+row.amountSell+"</td>"+
-                "<td>"+row.amountBuy+"</td>"+
-                "<td>"+row.rate+"</td>"+
-                "<td>"+row.timePlaced+"</td>"+
-                "<td>"+row.originatingCountry+"</td>"+
-              "</tr>");
-          }
-      });
-
-      jQuery('#vmap').vectorMap({
-          map: 'world_en',
-          backgroundColor: "#000",
-          color: '#ffffff',
-          hoverOpacity: 0.7,
-          selectedColor: '#666666',
-          enableZoom: true,
-          showTooltip: true,
-          values: [],
-          scaleColors: ['#C8EEFF', '#006491'],
-          normalizeFunction: 'polynomial'
-      });
+      var markers = [];
+      var map;
 
       var socket = io('http://127.0.0.1:9090');
       socket.emit('subscribe', "app");
-      socket.on('init', function (data) {
-        console.log(data);
-        socket.emit('my other event', { my: 'data' });
-      });
 
       socket.on('message', function (data) {
         row = JSON.parse(data);
+        addOnTable(row);
+        addOnMap(row);
+      });
+
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: -34.397, lng: 150.644},
+          zoom: 2
+        });
+        mc = new MarkerClusterer(map, markers, {gridSize: 50, maxZoom: 15});
+        initData();
+      }
+
+      function initData() {
+        $.get("http://localhost:8080/message", function(data) {
+          for (var ii = 0; ii <= data.length; ii++) {
+            var row = data[ii];
+            if (row !== undefined) {
+              $("#tbody-start").append("<tr>"+
+                    "<th scope='row'>"+row.id+"</th>"+
+                    "<td>"+row.userId+"</td>"+
+                    "<td>"+row.currencyFrom+"</td>"+
+                    "<td>"+row.currencyTo+"</td>"+
+                    "<td>"+row.amountSell+"</td>"+
+                    "<td>"+row.amountBuy+"</td>"+
+                    "<td>"+row.rate+"</td>"+
+                    "<td>"+row.timePlaced+"</td>"+
+                    "<td>"+row.originatingCountry+"</td>"+
+                  "</tr>");
+              addOnMap(row)
+            }
+          }
+        });
+      }
+
+      function addOnTable(row) {
         $("#tbody-start").prepend("<tr>"+
               "<th scope='row'>"+row.id+"</th>"+
               "<td>"+row.userId+"</td>"+
@@ -123,7 +128,20 @@
               "<td>"+row.timePlaced+"</td>"+
               "<td>"+row.originatingCountry+"</td>"+
             "</tr>");
-      });
+      }
+
+      function addOnMap(row) {
+        $.get("https://maps.googleapis.com/maps/api/geocode/json?address="+row.originatingCountry+"&key="+window.config.geoKey, function() {})
+          .done(function(response, ciao) {
+          if (response.status == "OK") {
+            var coord = response.results[0].geometry.location;
+            mc.addMarker(new google.maps.Marker({
+              position: coord
+            }));
+          }
+        });
+      }
+
     </script>
   </body>
 </html>
