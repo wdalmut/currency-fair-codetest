@@ -34,6 +34,9 @@ make backend_start
 ```
 It runs backend server on port `8080`
 
+### Rate Limit
+If in 300s you call this api more of 10 times the system returns status code 429 (Rate Limit), you can unlock this status with `http://api-server:8080/reset?userId=134256`
+
 ## Frontend
 ```
 make frontend_start
