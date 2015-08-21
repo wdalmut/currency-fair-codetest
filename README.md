@@ -8,29 +8,29 @@ This repository contains three different applications, three in one but every co
 Into the project root I wrote a Makefile to manage primary tasks.
 
 ## RT
+```bash
+$ make socket_build
 ```
-make socket_build
-```
-This command builds the socket server, it downloads depenendcies and build them.
+This command builds the socket server, it downloads dependencies and build them.
 
-```
-make socket_start
+```bash
+$ make socket_start
 ```
 It starts socket server on port `9090`
 
 ## Backend
-```
+```bash
 make backend_build
 ```
 It prepares backend, downloads dependencies...
 
-```
-make backend_test
+```bash
+$ make backend_test
 ```
 it run tests. It written in PHPUnit.
 
-```
-make backend_start
+```bash
+$ make backend_start
 ```
 It runs backend server on port `8080`
 
@@ -38,8 +38,8 @@ It runs backend server on port `8080`
 If in 300s you call this api more of 10 times the system returns status code 429 (Rate Limit), you can unlock this status with `http://api-server:8080/reset?userId=134256`
 
 ## Frontend
-```
-make frontend_start
+```bash
+$ make frontend_start
 ```
 It run frontend server on port `8085`
 
