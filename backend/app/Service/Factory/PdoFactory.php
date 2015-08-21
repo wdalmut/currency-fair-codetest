@@ -7,10 +7,12 @@ class PdoFactory
 {
     public function create(Container $c)
     {
-        $host = $c->get("parameters")['database']['host'];
-        $dbName = $c->get("parameters")['database']['dbName'];
-        $user = $c->get("parameters")['database']['user'];
-        $password = $c->get("parameters")['database']['password'];
+        $parametes = $c->get('parameters');
+
+        $host = $parametes['database']['host'];
+        $dbName = $parametes['database']['dbName'];
+        $user = $parametes['database']['user'];
+        $password = $parametes['database']['password'];
 
         $pdo = new \PDO("mysql:host={$host};dbname={$dbName}", $user, $password);
         return $pdo;
