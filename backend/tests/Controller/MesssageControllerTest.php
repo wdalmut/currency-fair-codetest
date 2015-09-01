@@ -2,8 +2,6 @@
 
 namespace AppTest\Controller;
 
-use Zend\Diactoros\Stream;
-
 class MessageControllerTest extends \PHPUnit_Framework_TestCase
 {
     private $app;
@@ -28,17 +26,13 @@ class MessageControllerTest extends \PHPUnit_Framework_TestCase
             "rate" => 1,
         ];
 
-        $request = (new \Zend\Diactoros\Request())
-            ->withUri(new \Zend\Diactoros\Uri('/message'))
-            ->withMethod("POST");
-
-        $stream = new Stream('php://memory', 'wb+');
-        $stream->write(json_encode($message));
-
-        $request = $request->withBody($stream);
-        $response = new \Zend\Diactoros\Response();
-
         for ($ii = 1; $ii <= 11; $ii++) {
+            $request = (new \Zend\Diactoros\Request())
+                ->withUri(new \Zend\Diactoros\Uri('/message'))
+                ->withMethod("POST");
+
+            $request->getBody()->write(json_encode($message));
+            $response = new \Zend\Diactoros\Response();
             $response = $this->app->run($request, $response);
             if ($ii == 11) {
                 $assertStatusCode = 429;
@@ -64,10 +58,7 @@ class MessageControllerTest extends \PHPUnit_Framework_TestCase
             ->withUri(new \Zend\Diactoros\Uri('/message'))
             ->withMethod("POST");
 
-        $stream = new Stream('php://memory', 'wb+');
-        $stream->write(json_encode($message));
-
-        $request = $request->withBody($stream);
+        $request->getBody()->write(json_encode($message));
         $response = new \Zend\Diactoros\Response();
 
         $response = $this->app->run($request, $response);
@@ -83,10 +74,8 @@ class MessageControllerTest extends \PHPUnit_Framework_TestCase
             ->withUri(new \Zend\Diactoros\Uri('/message'))
             ->withMethod("POST");
 
-        $stream = new Stream('php://memory', 'wb+');
-        $stream->write(json_encode($message));
 
-        $request = $request->withBody($stream);
+        $request->getBody()->write(json_encode($message));
         $response = new \Zend\Diactoros\Response();
 
         $response = $this->app->run($request, $response);
