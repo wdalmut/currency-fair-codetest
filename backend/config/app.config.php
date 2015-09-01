@@ -1,13 +1,5 @@
 <?php
 return [
-    "parameters" => [
-        "database" => [
-            "host" => "127.0.0.1",
-            "user" => "root",
-            "password" => "root",
-            "dbName" => "app",
-        ]
-    ],
     "redis" => \DI\object("Predis\Client"),
     "rate-limiter" => \DI\object('App\Service\RateLimiter')
         ->constructor(\DI\get("redis")),
