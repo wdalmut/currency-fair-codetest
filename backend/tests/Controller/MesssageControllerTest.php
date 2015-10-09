@@ -33,7 +33,8 @@ class MessageControllerTest extends \PHPUnit_Framework_TestCase
 
             $request->getBody()->write(json_encode($message));
             $response = new \Zend\Diactoros\Response();
-            $response = $this->app->run($request, $response);
+            $app = new \GianArb\Penny\App();
+            $response = $app->run($request, $response);
             if ($ii == 11) {
                 $assertStatusCode = 429;
             }
